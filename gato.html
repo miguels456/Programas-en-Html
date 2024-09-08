@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gato</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        
+        .board {
+            border: 3px solid #000;
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 2px;
+        }
+        
+        .cell {
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .cell:hover {
+            background-color: #f0f0f0;
+        }
+        
+        #scores {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gato</h1>
+    <div id="scores">
+        <span>X: <span id="scoreX">0</span></span>
+        <span>O: <span id="scoreO">0</span></span>
+    </div>
+    <div class="container">
+        <div class="board" id="board">
+            <div class="cell" onclick="playMove(0, 0)"></div>
+            <div class="cell" onclick="playMove(0, 1)"></div>
+            <div class="cell" onclick="playMove(0, 2)"></div>
+            <div class="cell" onclick="playMove(1, 0)"></div>
+            <div class="cell" onclick="playMove(1, 1)"></div>
+            <div class="cell" onclick="playMove(1, 2)"></div>
+            <div class="cell" onclick="playMove(2, 0)"></div>
+            <div class="cell" onclick="playMove(2, 1)"></div>
+            <div class="cell" onclick="playMove(2, 2)"></div>
+        </div>
+    </div>
+    <button onclick="resetGame()">Reiniciar</button>
+
+    <script>
+        let currentPlayer = 'X';
+        let scoreX = 0;
+        let scoreO = 0;
+        
+        let boardState = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', '']
+        ];
+        
+        function checkWinner() {
+            for (let i = 0; i < 3; i++) {
+                if (boardState[i][0] !== '' && boardState[i][0] === boardState[i][1] && boardState[i][1] === boardState[i][2]) {
+                    return boardState[i][0];
+                }
+                if (boardState[0][i] !== '' && boardState[0][i] === boardState[1][i] && boardState[1][i] === boardState[2][i]) {
+                    return boardState[0][i];
+                }
+            }
+        
+            if (boardState[0][0] !== '' && boardState[0][0] === boardState[1][1] && boardState[1][1] === boardState[2][2]) {
+                return boardState[0][0];
+            }
+            if (boardState[0][2] !== '' && boardState[0][2] === boardState[1][1] && boardState[1][1] === boardState[2][0]) {
+                return boardState[0][2];
+            }
+        
+            if (!boardState.flat().includes('')) {
+                return 'tie';
+            }
+        
+            return null;
+        }
+        
+        function playMove(row, col) {
+            if (boardState[row][col] === '' && !checkWinner()) {
+                boardState[row][col] = currentPlayer;
+                document.getElementById(`board`).children[row * 3 + col].innerText = currentPlayer;
+                let winner = checkWinner();
+                if (winner) {
+                    if (winner === 'tie') {
+                        alert('Empate!');
+                    } else {
+                        alert(`¡${winner} ha ganado!`);
+                        if (winner === 'X') {
+                            scoreX++;
+                            document.getElementById("scoreX").innerText = scoreX;
+                        } else {
+                            scoreO++;
+                            document.getElementById("scoreO").innerText = scoreO;
+                        }
+                    }
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+            }
+        }
+        
+        function resetGame() {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    boardState[i][j] = '';
+                    document.getElementById(`board`).children[i * 3 + j].innerText = '';
+                }
+            }
+            currentPlayer = 'X';
+        }
+    </script>
+</body>
+</html>
